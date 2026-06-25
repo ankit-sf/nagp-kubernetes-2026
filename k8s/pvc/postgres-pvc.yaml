@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: workshop
+  labels:
+    app: postgres
+spec:
+  # GKE automatically provisions a GCE Persistent Disk for "standard-rwo"
+  storageClassName: standard-rwo
+  accessModes:
+    - ReadWriteOnce      # Only one pod mounts at a time (appropriate for Postgres)
+  resources:
+    requests:
+      storage: 1Gi       # 1 GB is sufficient for this workshop dataset
