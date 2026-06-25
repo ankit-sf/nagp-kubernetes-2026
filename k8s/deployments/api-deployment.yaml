@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-api
+  namespace: workshop
+  labels:
+    app: product-api
+    tier: service
+spec:
+  replicas: 4                       # Assignment: 4 pods for Service API tier
+  selector:
+    matchLabels:
+      app: product-api
+
+  # ── Rolling update strategy ────────────────────────────────────────────────
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge:       1             # Allow 1 extra pod during update
+      maxUnavailable: 0             # Never go below 4 healthy pods
+
+  template:
+    metadata:
+      labels:
+        app: product-api
+        tier: service
+    spec:
+      terminationGracePeriodSeconds: 30
+
+      containers:
+        - name: product-api
+          # TODO//done
+          image: dreo1/product-api:1.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              name: http
+
+          # ── Config from ConfigMap ──────────────────────────────────────
+          envFrom:
+            - configMapRef:
+                name: api-config
+
+          # ── Password from Secret ───────────────────────────────────────
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: DB_PASSWORD
+
+          # ── Resource limits (FinOps requirement) ──────────────────────
+          resources:
+            requests:
+              cpu:    "100m"
+              memory: "128Mi"
+            limits:
+              cpu:    "300m"
+              memory: "256Mi"
+
+          # ── Liveness probe: restart pod if unhealthy ───────────────────
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 20
+            periodSeconds:       15
+            failureThreshold:    3
+
+          # ── Readiness probe: only send traffic when DB is reachable ────
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds:       10
+            failureThreshold:    3

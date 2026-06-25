@@ -1,0 +1,23 @@
+-- Initialize product catalog database
+-- This script runs automatically when the PostgreSQL container starts for the first time.
+
+CREATE TABLE IF NOT EXISTS products (
+    id          SERIAL PRIMARY KEY,
+    name        VARCHAR(100)   NOT NULL,
+    category    VARCHAR(50)    NOT NULL,
+    price       NUMERIC(10, 2) NOT NULL,
+    stock       INTEGER        NOT NULL DEFAULT 0,
+    description TEXT,
+    created_at  TIMESTAMP      NOT NULL DEFAULT NOW()
+);
+
+-- Seed 8 sample records
+INSERT INTO products (name, category, price, stock, description) VALUES
+  ('Mac book Pro 15',    'Electronics',   1299.99, 25, 'High-performance laptop with 16GB RAM and 512GB SSD'),
+  ('Wireless Mouse',     'Electronics',     29.99, 150, 'Ergonomic wireless mouse with 12-month battery life'),
+  ('Standing Desk',      'Furniture',      499.99,  10, 'Height-adjustable standing desk, 140cm wide'),
+  ('USB-C Hub 7-in-1',   'Electronics',     49.99,  80, '7-port USB-C hub with 4K HDMI and 100W PD charging'),
+  ('Noise-Cancel Headph','Electronics',    249.99,  40, 'Over-ear ANC headphones with 30hr battery life'),
+  ('Office Chair',       'Furniture',      349.99,   8, 'Ergonomic mesh office chair with lumbar support'),
+  ('Webcam 4K',          'Electronics',     89.99,  60, '4K autofocus webcam with built-in ring light'),
+  ('Mechanical Keyboard','Electronics',    129.99,  35, 'TKL mechanical keyboard with Cherry MX switches');

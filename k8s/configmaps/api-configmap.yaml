@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-config
+  namespace: workshop
+  labels:
+    app: product-api
+data:
+  # Database host uses the Kubernetes Service name (DNS-based, not pod IP)
+  DB_HOST: "postgres-service"
+  DB_PORT: "5432"
+  DB_NAME: "productdb"
+  DB_USER: "apiuser"
+  PORT:    "3000"

@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: product-api-ingress
+  namespace: workshop
+  annotations:
+    # Use GKE's managed NGINX ingress controller
+    kubernetes.io/ingress.class: "nginx"
+    # Rewrite path so /api/v1 prefix is stripped before forwarding to the service
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    # Enable CORS for browser clients
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    # Connection and read timeouts (seconds)
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "10"
+    nginx.ingress.kubernetes.io/proxy-read-timeout:    "30"
+spec:
+  rules:
+    # Replace with your actual domain or the Ingress controller's external IP.
+    # During development, use nip.io:  e.g. api.34.100.10.20.nip.io
+    # - host: api.YOUR_INGRESS_IP.nip.io
+    - host: api.34.131.184.223.nip.io
+      http:
+        paths:
+          - path:     /api/v1(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: product-api-service
+                port:
+                  number: 80
