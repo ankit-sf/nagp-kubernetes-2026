@@ -20,7 +20,7 @@ spec:
       resource:
         name: cpu
         target:
-          type:               AverageUtilization
+          type:               AverageValue
           averageUtilization: 60
 
     # Scale when average memory exceeds 70%
@@ -28,7 +28,7 @@ spec:
       resource:
         name: memory
         target:
-          type:               AverageUtilization
+          type:               AverageValue
           averageUtilization: 70
 
   behavior:
